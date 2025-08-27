@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
+
+    <!--解析此布局时，通过name反射创建fragment实例-->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/placeFragment"
+        android:name="com.lky.sunnyweather.ui.place.PlaceFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+</LinearLayout>

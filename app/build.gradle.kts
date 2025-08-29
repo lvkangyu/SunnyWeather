@@ -51,8 +51,14 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    //扩展函数activityViewModels()
+    implementation(libs.fragment)
+    //下拉刷新布局
+    implementation(libs.androidx.swiperefreshlayout)
     //更强大的滚动控件
     implementation(libs.androidx.recyclerview)
+    //动画
+    implementation(libs.lottie)
     //retrofit
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)

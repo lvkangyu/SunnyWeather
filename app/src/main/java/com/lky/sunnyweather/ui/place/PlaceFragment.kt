@@ -1,25 +1,33 @@
 package com.lky.sunnyweather.ui.place
 
+import android.content.Context
+import android.content.Context.INPUT_METHOD_SERVICE
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lky.sunnyweather.R
+import com.lky.sunnyweather.ui.weather.WeatherActivity
 
 class PlaceFragment : Fragment() {
 
     //使用 lazy 延迟初始化 ViewModel
     //ViewModel 的生命周期与 Fragment 绑定，(View 重建也不会丢失数据)
-    val viewModel by lazy { ViewModelProvider(this).get(PlaceViewModel::class.java) }
+    // val viewModel by lazy { ViewModelProvider(this).get(PlaceViewModel::class.java) }
+    // 在Fragment中，想要共享Activity级别的ViewModel
+    val viewModel: PlaceViewModel by activityViewModels()
     private lateinit var adapter: PlaceAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchPlaceEdit: EditText
@@ -36,11 +44,32 @@ class PlaceFragment : Fragment() {
         searchPlaceEdit = view.findViewById(R.id.searchPlaceEdit)
         bgImageView = view.findViewById(R.id.bgImageView)
 
+        //只有当PlaceFragment被嵌入PlaceActivity中，并且之前已经存在选中的城市，此时才会直接跳转到WeatherActivity，这样就可以解决无限循环跳转的问题了。
+        if (activity is PlaceActivity && viewModel.isPlaceSaved()) {
+            val place = viewModel.getSavedPlace()
+            val intent = Intent(context, WeatherActivity::class.java).apply {
+                putExtra("location_lng", place.location.lng)
+                putExtra("location_lat", place.location.lat)
+                putExtra("place_name", place.name)
+            }
+            startActivity(intent)
+            activity?.finish()
+            return
+        }
+
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = layoutManager
         adapter = PlaceAdapter(this, viewModel.placeList)
         recyclerView.adapter = adapter
 
+        //点击时获取键盘
+        searchPlaceEdit.setOnClickListener {
+            // EditText 获取焦点
+            searchPlaceEdit.requestFocus()
+            //Fragment 的 requireContext() 或 activity 属性来获取 Context
+            val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(searchPlaceEdit, InputMethodManager.SHOW_IMPLICIT)
+        }
         //监听搜索框输入
         searchPlaceEdit.addTextChangedListener { editable ->
             val content = editable.toString()

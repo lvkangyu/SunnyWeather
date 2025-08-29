@@ -4,8 +4,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:fitsSystemWindows="true">
+    android:orientation="vertical">
 
     <!--解析此布局时，通过name反射创建fragment实例-->
     <androidx.fragment.app.FragmentContainerView

@@ -21,6 +21,11 @@ object PlaceDao {
 
     fun isPlaceSaved() = sharedPreferences().contains("place")
 
+    fun clearPlace() = sharedPreferences().edit {
+            remove("place") // 移除保存的 place 数据
+        }
+
+
     private fun sharedPreferences() =
         SunnyWeatherApplication.context.getSharedPreferences("sunny_weather", Context.MODE_PRIVATE)
 }
